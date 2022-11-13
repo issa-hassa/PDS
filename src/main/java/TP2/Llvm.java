@@ -112,6 +112,12 @@ public class Llvm {
       return "i32";
     }
   }
+  
+  static public class IntPointeur extends Type {
+	    public String toString() {
+	      return "i32*";
+	    }
+	  }
 
   // TODO : other types
 
@@ -153,6 +159,159 @@ public class Llvm {
       return lvalue + " = add " + type + " " + left + ", " + right +  "\n";
     }
   }
+  
+  /**
+   * Class representing the add instruction
+   */
+  
+  static public class Sous extends Instruction {
+	    Type type;
+	    String left;
+	    String right;
+	    String lvalue;
+
+	    /**
+	     * The add instruction.
+	     * lvalue = left + right
+	     * @param type The type of lvalue, left and right
+	     * @param left the left side of the addition
+	     * @param right the right side of the addition
+	     * @param lvalue the variable containing the result of the addition
+	     */
+	    public Sous(Type type, String left, String right, String lvalue) {
+	      this.type = type;
+	      this.left = left;
+	      this.right = right;
+	      this.lvalue = lvalue;
+	    }
+
+	    public String toString() {
+	      return lvalue + " = sub " + type + " " + left + ", " + right +  "\n";
+	    }
+	  }
+  /**
+   * Class representing the add instruction
+   */
+  
+  static public class Mult extends Instruction {
+	    Type type;
+	    String left;
+	    String right;
+	    String lvalue;
+
+	    /**
+	     * The add instruction.
+	     * lvalue = left + right
+	     * @param type The type of lvalue, left and right
+	     * @param left the left side of the addition
+	     * @param right the right side of the addition
+	     * @param lvalue the variable containing the result of the addition
+	     */
+	    public Mult(Type type, String left, String right, String lvalue) {
+	      this.type = type;
+	      this.left = left;
+	      this.right = right;
+	      this.lvalue = lvalue;
+	    }
+
+	    public String toString() {
+	      return lvalue + " = mul " + type + " " + left + ", " + right +  "\n";
+	    }
+	  }
+  
+  /**
+   * Class representing the add instruction
+   */
+  
+  static public class Div extends Instruction {
+	    Type type;
+	    String left;
+	    String right;
+	    String lvalue;
+
+	    /**
+	     * The add instruction.
+	     * lvalue = left + right
+	     * @param type The type of lvalue, left and right
+	     * @param left the left side of the addition
+	     * @param right the right side of the addition
+	     * @param lvalue the variable containing the result of the addition
+	     */
+	    public Div(Type type, String left, String right, String lvalue) {
+	      this.type = type;
+	      this.left = left;
+	      this.right = right;
+	      this.lvalue = lvalue;
+	    }
+
+	    public String toString() {
+	      return lvalue + " = udiv " + type + " " + left + ", " + right +  "\n";
+	    }
+	  }
+  static public class AffectInt extends Instruction {
+	  String  varname ;
+  	  String value;
+	   
+	  
+	    public AffectInt(String varname, String value){
+	    	        this.varname = varname;
+	    	        this.value = value ;
+	    	    }
+
+	    	  
+
+	    public String toString() {
+	        return "store i32 "+varname+", i32* %"+value+"\n";
+	    }	  }
+  
+  static public class VarIntExpression extends Instruction {
+	    String varname;
+	    String res;
+
+	    public VarIntExpression(String name, String res){
+	      this.varname = name;
+	      this.res = res;
+	    }
+
+	    public String toString() {
+	      return res+" = load i32, i32* %"+varname+"\n";
+	    }
+	  }
+  static public class DeclarationInt extends Instruction{
+	   String name;
+	  
+	   
+	   public DeclarationInt(String name){
+		   this.name  = name;
+		   
+	   }
+	   
+	   @Override
+	   public String toString() {
+		   return "%"+name+" = alloca i32";
+		
+	   	}
+	   
+   	}
+  
+  static public class DeclarationTab extends Instruction{
+	   String name;
+	   int size ;
+	  
+	   
+	   public DeclarationTab(String name,int size){
+		   this.name  = name;
+		   this.size = size;
+	   }
+	   
+	   @Override
+	   public String toString() {
+		      return "%"+name+ " = alloca ["+size+" x i32] \n";
+		    }
+		
+	   	
+	   
+  	}
 
   /**
    * Class representing the return instruction
@@ -176,5 +335,8 @@ public class Llvm {
     }
   }
 
+ 
+
+	
   // TODO : other instructions
 }

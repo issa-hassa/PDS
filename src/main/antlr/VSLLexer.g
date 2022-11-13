@@ -21,7 +21,19 @@ fragment ASCII  : ~('\n'|'"');
 // keywords
 LP    : '(' ; // Left parenthesis
 RP    : ')' ;
+LC : '{';
+RC : '}';
+LB : '[';
+RB : ']';
+VG : ',';
+VAR : 'INT';
 PLUS      : '+'      ;
+SOUS : '-';
+MULT : '*';
+DIV : '/';
+AFFSYMBOL : ':=';
+PROTYPESYMBOLE : 'PROTO';
+FUNCTIONSYMBOLE : 'FUNC';
 
 // TODO : other keywords
 

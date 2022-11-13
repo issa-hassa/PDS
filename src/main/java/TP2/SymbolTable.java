@@ -25,22 +25,46 @@ public class SymbolTable {
    */
   public static abstract class Symbol {
     String ident; // minimum, used in the storage map
+    Type type;
+
+	public Type getType() {
+		return type;
+	}
+
+	public void setType(Type type) {
+		this.type = type;
+	}
+
+	public String getIdent() {
+		return ident;
+	}
+
+
   }
 
   public static class VariableSymbol extends Symbol {
-    Type type;
+   // Type type;
 
     /**
      * A variable symbol
      * @param type the type of the symbol
      * @param ident the name of the symbol
      */
-    VariableSymbol(Type type, String ident) {
+    public VariableSymbol(Type type, String ident) {
       this.type = type;
       this.ident = ident;
     }
+    
 
-    @Override public boolean equals(Object obj) {
+    public Type getType() {
+		return type;
+	}
+
+
+	
+
+
+	@Override public boolean equals(Object obj) {
       if(obj == null) return false;
       if(obj == this) return true;
       if(!(obj instanceof VariableSymbol)) return false;
@@ -50,8 +74,27 @@ public class SymbolTable {
     }
   }
 
+  public static class TabVariableSymbol extends Symbol{
+	    Type type;
+	    int size; 
+
+	    public TabVariableSymbol(Type type, String ident, int size){
+	      this.type = type;
+	      this.ident = ident;
+	      this.size = size;
+	    }
+
+	    @Override public boolean equals(Object obj) {
+	      if(obj == null) return false;
+	      if(obj == this) return true;
+	      if(!(obj instanceof TabVariableSymbol)) return false;
+	      TabVariableSymbol o = (TabVariableSymbol) obj;
+	      return o.type.equals(this.type) &&
+	        o.ident.equals(this.ident);
+	    }
+	  }
   public static class FunctionSymbol extends Symbol {
-    Type returnType;
+   // Type returnType;
     /**
      * arguments is an ordered list of VariableSymbol
      */
@@ -69,7 +112,7 @@ public class SymbolTable {
      * @param defined false if declared but not defined
      */
     FunctionSymbol(Type returnType, String ident, List<VariableSymbol> arguments, boolean defined) {
-      this.returnType = returnType;
+      this.type = returnType;
       this.ident = ident;
       this.arguments = arguments;
       this.defined = defined;
@@ -80,7 +123,7 @@ public class SymbolTable {
       if(obj == this) return true;
       if(!(obj instanceof FunctionSymbol)) return false;
       FunctionSymbol o = (FunctionSymbol) obj;
-      return o.returnType.equals(this.returnType) &&
+      return o.type.equals(this.type) &&
         o.ident.equals(this.ident) &&
         o.arguments.equals(this.arguments) &&
         o.defined == this.defined;

@@ -1,6 +1,7 @@
 package TP2.ASD;
 
 import TP2.Llvm;
+import TP2.SymbolTable;
 import TP2.TypeException;
 
 /**
@@ -8,7 +9,7 @@ import TP2.TypeException;
  */
 public abstract class Expression {
     public abstract String pp();
-    public abstract Expression.RetExpression toIR() throws TypeException;
+    public abstract Expression.RetExpression toIR(SymbolTable table) throws TypeException;
 
     /**
      * Object returned by toIR on expressions, with IR + synthesized attributes

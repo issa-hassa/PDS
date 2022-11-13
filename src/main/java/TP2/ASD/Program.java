@@ -1,20 +1,28 @@
 package TP2.ASD;
 
-import TP2.Llvm;
-import TP2.TypeException;
+import java.util.List;
+
+import TP2.*;
+import TP2.Llvm.IR;
+
 
 public class Program {
     Expression e; // What a program contains. TODO : change when you extend the language
+    List<TP2.ASD.Instruction> instructions;
 
-    public Program(Expression e) {
-      this.e = e;
+    public Program( List<TP2.ASD.Instruction> instructions) {
+      this.instructions = instructions;
     }
 
     /**
      * Pretty-printer
      */
     public String pp() {
-      return e.pp();
+    	String res = "";
+    	for(Instruction i: instructions) {
+    		res += i.pp();
+    	}
+      return res;
     }
 
     /**
@@ -24,11 +32,14 @@ public class Program {
       // TODO : change when you extend the language
 
       // computes the IR of the expression
-      Expression.RetExpression retExpr = e.toIR();
-      // add a return instruction
-      Llvm.Instruction ret = new Llvm.Return(retExpr.type.toLlvmType(), retExpr.result);
-      retExpr.ir.appendCode(ret);
+      SymbolTable table = new SymbolTable();
+    
+      Llvm.IR ir = new Llvm.IR(Llvm.empty(),Llvm.empty());
+      for(Instruction i: instructions) {
+  		ir.append(i.toIR(table));
+  	}
+      
 
-      return retExpr.ir;
+      return ir;
     }
   }
