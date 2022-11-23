@@ -24,7 +24,7 @@ public class DeclarationInt extends Declaration{
 
 	        SymbolTable.VariableSymbol vSymbol = new SymbolTable.VariableSymbol(new Int(), name);
 	        if(!tab.add(vSymbol)){
-	            throw new RuntimeException(name+" already is the Symbol Tab.");
+	            throw new RuntimeException(name+" est déjà présent dans la table de symbole.");
 	        }
 	        ir.appendCode(new Llvm.DeclarationInt(name));
 

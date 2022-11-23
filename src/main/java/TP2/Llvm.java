@@ -77,14 +77,14 @@ public class Llvm {
 
       // We create the function main
       // TODO : remove this when you extend the language
-      r.append("define i32 @main() {\n");
+    //  r.append("define i32 @main() {\n");
 
 
       for(Instruction inst: code)
         r.append(inst);
 
       // TODO : remove this when you extend the language
-      r.append("}\n");
+    //  r.append("}\n");
 
       return r.toString();
     }
@@ -118,7 +118,11 @@ public class Llvm {
 	      return "i32*";
 	    }
 	  }
-
+  static public class Void extends Type {
+	    public String toString() {
+	      return "void";
+	    }
+	  }
   // TODO : other types
 
 
@@ -261,7 +265,7 @@ public class Llvm {
 	    	  
 
 	    public String toString() {
-	        return "store i32 "+varname+", i32* %"+value+"\n";
+	        return "store i32 "+value+", i32* %"+varname+"\n";
 	    }	  }
   
   static public class VarIntExpression extends Instruction {
@@ -288,7 +292,7 @@ public class Llvm {
 	   
 	   @Override
 	   public String toString() {
-		   return "%"+name+" = alloca i32";
+		   return "%"+name+" = alloca i32" + "\n";
 		
 	   	}
 	   
@@ -312,6 +316,139 @@ public class Llvm {
 	   	
 	   
   	}
+  static public class instructionIf extends Instruction{
+	    String eRes = "";
+	    String tmp = "";
+	    String branchIF = "";
+	    String branchFI = "";
+	    String branchELSE ="";
+	    boolean Else = false;
+	    /**
+	     * 
+	     * @param eRes resultat de l'expression
+	     * @param tmp resultat de icmp
+	     * @param branchIF
+	     * @param branchELSE
+	     * @param branchFI
+	     * @param Else
+	     */
+	    public instructionIf(String eRes, String tmp, String branchIF,String branchELSE, String branchFI,boolean Else){
+	      this.eRes = eRes;
+	      this.tmp = tmp;
+	      this.branchIF = branchIF;
+	      this.branchFI = branchFI;
+	      this.branchELSE = branchELSE;
+	      this.Else = Else;
+	    }
+
+	    
+	    @Override
+	    public String toString(){
+	      String s1 = tmp+" = icmp ne i32 "+eRes+" , 0\n";
+	      s1 += "br i1 "+tmp+", label %"+branchIF+", label %";
+	    
+	      if(this.Else) {
+	    	  s1 +=  branchELSE+"\n";
+	      }
+	      else {
+	    	  s1 +=  branchFI+"\n";
+	      }
+	      
+	      return s1;
+	    }
+	  }
+  	static public class instructionWhile extends Instruction {
+  		String branchCondition;
+  		String branchFin;
+  		String resE;
+  		
+  		public instructionWhile(String branchCondition, String branchFin, String resE){
+  			this.branchCondition = branchCondition;
+  			this.branchFin = branchFin;
+  			this.resE = resE;
+  		}
+		@Override
+		public String toString() {
+			String s2 =  Utils.newtmp();
+			String s1 = s2 + " = icmp ne i32 "+ resE + " ,0\n";
+			s1 += "br i1 "+s2+", label %"+branchCondition + ", label %"+branchFin +"\n";
+			return s1;
+		}
+  		
+  	}
+  	static public class instructionFunc extends Instruction {
+  		String nom;
+  		String type;
+  		ArrayList<String> args;
+  		
+  		public instructionFunc(String nom, String type, ArrayList<String> args) {
+  			System.out.println("type= " + type + "nom = " + nom  + "args" + args.toString());
+  			this.nom = nom;
+  			this.args = args;
+  			this.type = type;
+  		}
+		@Override
+		public String toString() {
+			String res = "define " + type + " @" +nom+"( " ;
+			for(int i = 0; i<args.size();i++) {
+				String s = args.get(i);
+				if(i == args.size() - 1) { res += "i32 %" +s ; }
+				else {
+					res += "i32 %" +s +", ";
+				}
+			}
+			res +=" ) {  \n";
+			
+			return res;
+		}
+  		
+  	}
+  	
+  	static public class Ret extends Instruction {
+        String eRes;
+
+        public Ret(String label) {
+          this.eRes = label;
+        }
+
+        public String toString(){
+          return "ret i32  " +eRes;
+        }
+    }	
+  static public class Br extends Instruction {
+      String label;
+
+      public Br(String label) {
+        this.label = label;
+      }
+
+      public String toString(){
+        return "br label %"+label + "\n";
+      }
+  }
+ 
+  static public class Label extends Instruction {
+      String label;
+
+      public Label(String label){
+        this.label = label;
+      }
+
+      public String toString(){
+        return label+": \n";
+      }
+  }
+  
+  static public class LC extends Instruction {
+     
+
+     
+
+      public String toString(){
+        return "}";
+      }
+  }
+  
 
   /**
    * Class representing the return instruction

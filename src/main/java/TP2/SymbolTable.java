@@ -111,7 +111,7 @@ public class SymbolTable {
      * @param arguments list of arguments of the function. 
      * @param defined false if declared but not defined
      */
-    FunctionSymbol(Type returnType, String ident, List<VariableSymbol> arguments, boolean defined) {
+    public FunctionSymbol(Type returnType, String ident, List<VariableSymbol> arguments, boolean defined) {
       this.type = returnType;
       this.ident = ident;
       this.arguments = arguments;

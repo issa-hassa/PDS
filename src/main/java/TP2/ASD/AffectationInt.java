@@ -24,13 +24,14 @@ import TP2.ASD.Expression.RetExpression;
      * Pretty-printer
      */
     public String pp() {
-      return   variableName + " := " + variableValue.pp() ;
+      return   variableName + " := " + variableValue.pp() +"\n";
     }
 
     /**
      * IR generation
      */
     public Llvm.IR toIR(TP2.SymbolTable tab) throws TypeException {
+      if(tab.lookup(variableName) == null) {throw new RuntimeException("La variable; " + this.variableName + " n'est pas déclarée");}
       Llvm.IR ir = new Llvm.IR(Llvm.empty(),Llvm.empty());
       Expression.RetExpression irExp = variableValue.toIR(tab);
       ir.append(irExp.ir);

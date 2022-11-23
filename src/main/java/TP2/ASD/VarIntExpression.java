@@ -14,8 +14,8 @@ public class VarIntExpression extends Expression {
 	}
 	@Override
 	public String pp() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return this.varname +" ";
 	}
 
 	@Override

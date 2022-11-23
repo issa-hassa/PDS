@@ -8,21 +8,18 @@ import TP2.Llvm.IR;
 
 public class Program {
     Expression e; // What a program contains. TODO : change when you extend the language
-    List<TP2.ASD.Instruction> instructions;
+    InstructionFunc f;;
 
-    public Program( List<TP2.ASD.Instruction> instructions) {
-      this.instructions = instructions;
+    public Program( InstructionFunc f) {
+      this.f = f;
     }
 
     /**
      * Pretty-printer
      */
     public String pp() {
-    	String res = "";
-    	for(Instruction i: instructions) {
-    		res += i.pp();
-    	}
-      return res;
+    	
+      return f.pp();
     }
 
     /**
@@ -33,12 +30,13 @@ public class Program {
 
       // computes the IR of the expression
       SymbolTable table = new SymbolTable();
-    
-      Llvm.IR ir = new Llvm.IR(Llvm.empty(),Llvm.empty());
-      for(Instruction i: instructions) {
-  		ir.append(i.toIR(table));
-  	}
       
+      Llvm.IR ir = new Llvm.IR(Llvm.empty(),Llvm.empty());
+    //  for(Instruction i: instructions) {
+  	//	ir.append(i.toIR(table));
+  	//}
+     // System.out.println(f== null );
+     ir.append(f.toIR(table));
 
       return ir;
     }

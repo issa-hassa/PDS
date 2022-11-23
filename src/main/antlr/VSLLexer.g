@@ -27,13 +27,22 @@ LB : '[';
 RB : ']';
 VG : ',';
 VAR : 'INT';
+VOID : 'VOID';
+RETURN : 'RETURN';
 PLUS      : '+'      ;
 SOUS : '-';
 MULT : '*';
 DIV : '/';
+IF : 'IF';
+ELSE : 'ELSE';
+THEN : 'THEN';
+FI : 'FI';
+WHILE : 'WHILE';
+DO : 'DO';
+DONE : 'DONE';
 AFFSYMBOL : ':=';
 PROTYPESYMBOLE : 'PROTO';
-FUNCTIONSYMBOLE : 'FUNC';
+FUNC : 'FUNC';
 
 // TODO : other keywords
 
