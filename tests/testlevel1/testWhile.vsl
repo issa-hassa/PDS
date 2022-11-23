@@ -1,0 +1,4 @@
+ INT a
+ a := 10*2
+ 
+ WHILE  a - 1 DO { a := a-1 } DONE

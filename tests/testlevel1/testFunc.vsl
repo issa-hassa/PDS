@@ -1,0 +1,11 @@
+FUNC INT fact(n) {
+IF n 
+THEN
+	n :=n*n
+	n := n + 1
+	
+ELSE
+  n := n/n
+ FI
+ RETURN n
+}
