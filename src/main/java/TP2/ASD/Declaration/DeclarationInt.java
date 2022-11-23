@@ -11,7 +11,7 @@ public class DeclarationInt extends Declaration{
 		this.name = name;
 	}
 	@Override
-	public String pp() {
+	public String pp(int profondeur) {
 		
 		return "INT" + name + "\n";
 	}

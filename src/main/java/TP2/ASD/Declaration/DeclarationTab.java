@@ -14,7 +14,7 @@ public class DeclarationTab extends Declaration{
     }
 
     //Pretty-printer
-    public String pp(){
+    public String pp(int profondeur){
         return "INT "+value+"["+size+"] \n";
     }
 

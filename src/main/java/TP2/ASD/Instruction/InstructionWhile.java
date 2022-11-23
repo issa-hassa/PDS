@@ -18,8 +18,11 @@ public class InstructionWhile extends Instruction{
 		//this.level = level;
 	}
 	@Override
-	public String pp() {
-		return "WHILE "+ expression.pp() + "\n" + "{ " + instruction.pp() + "\n" + "DONE"; 
+	public String pp(int profondeur) {
+		return Utils.indent(profondeur) +
+				"WHILE "+Utils.indent(profondeur+1) +expression.pp() +
+				"\n"+Utils.indent(profondeur) +   "{ " + instruction.pp(profondeur + 1)
+				+ "\n" +Utils.indent(profondeur) + "DONE";
 		
 	}
 

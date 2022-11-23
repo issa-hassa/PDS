@@ -5,6 +5,7 @@ import TP2.Llvm.IR;
 import TP2.Llvm;
 import TP2.SymbolTable;
 import TP2.TypeException;
+import TP2.Utils;
 
 public class InstructionRet extends Instruction {
 	Expression e;
@@ -12,9 +13,9 @@ public class InstructionRet extends Instruction {
 		this.e = e;
 	}
 	@Override
-	public String pp() {
+	public String pp(int profondeur) {
 		
-		return "RETURN  " +e.pp();
+		return Utils.indent(profondeur)+ "RETURN  " +e.pp();
 	}
 
 	@Override

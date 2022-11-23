@@ -4,6 +4,7 @@ import TP2.ASD.Expression.Expression;
 
 import TP2.Llvm;
 import TP2.TypeException;
+import TP2.Utils;
 
 /**
  * Concrete class for Expression: add case
@@ -20,8 +21,8 @@ import TP2.TypeException;
     /**
      * Pretty-printer
      */
-    public String pp() {
-      return   variableName + " := " + variableValue.pp() +"\n";
+    public String pp(int profondeur) {
+      return Utils.indent(profondeur)+ variableName + " := " + variableValue.pp() +"\n";
     }
 
     /**

@@ -25,7 +25,7 @@ public class InstructionFunc extends Instruction {
 	}
 	
 	@Override
-	public String pp() {
+	public String pp(int profondeur) {
 		String res = "Func " + this.type.pp() + " " + nom +"(";
 		for (int i = 0; i < args.size(); i++) {
 		    String s = args.get(i);
@@ -34,7 +34,7 @@ public class InstructionFunc extends Instruction {
 		}
 		res += ")\n{\n";
 		for (Instruction i : this.instructions){
-			res +=i.pp();
+			res +=i.pp(profondeur+1);
 		}
 		res +="\n}\n";
 		return res;

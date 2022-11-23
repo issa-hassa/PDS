@@ -3,6 +3,7 @@ package TP2.ASD.Instruction;
 import TP2.Llvm;
 import TP2.SymbolTable;
 import TP2.TypeException;
+import TP2.Utils;
 
 import java.util.ArrayList;
 
@@ -12,12 +13,12 @@ public class InstructionBlock extends Instruction {
         this.instructions = i;
     }
     @Override
-    public String pp() {
-        String res = "{ ";
+    public String pp(int profondeur) {
+        String res = Utils.indent(profondeur)+ "{ ";
         for (Instruction ins : instructions) {
-            res += ins.pp();
+            res += ins.pp(profondeur+1);
         }
-       return res + " }";
+       return res + Utils.indent(profondeur)+ " }";
     }
 
     @Override

@@ -25,16 +25,18 @@ public class InstructionIf extends Instruction {
 	}
 	
 	@Override
-	public String pp() {
+	public String pp(int profondeur) {
 		String ppi1 = "";
 		String ppi2 = "";
 		String res = "";
-		for(Instruction i : i1) ppi1 += i.pp();
-			res += "IF " + e.pp() + "\n" + "THEN \n" + Utils.indent(0) + ppi1
+		for(Instruction i : i1) ppi1 += i.pp(profondeur + 1);
+			res =Utils.indent(profondeur)+ res;
+			res += "IF " + e.pp() + "\n"+Utils.indent(profondeur) + "THEN \n" + ppi1
 				  ;
 			if(i2 != null) {
-				for(Instruction i : i2) ppi2 += i.pp();
-				res += "ELSE \n" + Utils.indent(0) + ppi2;
+				for(Instruction i : i2) ppi2 += i.pp(profondeur+1);
+				res += Utils.indent(profondeur);
+				res += "ELSE \n" + Utils.indent(profondeur) + ppi2;
 			}
 			
 		
