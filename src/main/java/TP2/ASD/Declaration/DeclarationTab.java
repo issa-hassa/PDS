@@ -1,6 +1,7 @@
-package TP2.ASD;
+package TP2.ASD.Declaration;
 
 import TP2.*;
+import TP2.ASD.Type.PointeurInt;
 
 
 public class DeclarationTab extends Declaration{

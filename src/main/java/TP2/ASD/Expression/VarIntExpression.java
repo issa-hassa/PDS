@@ -1,10 +1,11 @@
-package TP2.ASD;
+package TP2.ASD.Expression;
 
 
 
 import java.util.List;
 
 import TP2.*;
+import TP2.ASD.Type.*;
 
 public class VarIntExpression extends Expression {
 	String varname;

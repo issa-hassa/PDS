@@ -1,11 +1,11 @@
-package TP2.ASD;
+package TP2.ASD.Instruction;
 
 import java.util.ArrayList;
 
 import TP2.*;
+import TP2.ASD.Expression.Expression;
 import TP2.Llvm.IR;
-import TP2.Llvm.Label;
-import TP2.ASD.Expression.RetExpression;
+import TP2.ASD.Expression.Expression.RetExpression;
 
 public class InstructionIf extends Instruction {
 	Expression e;
@@ -30,11 +30,11 @@ public class InstructionIf extends Instruction {
 		String ppi2 = "";
 		String res = "";
 		for(Instruction i : i1) ppi1 += i.pp();
-			res += "IF " + e.pp() + "\n" + "THEN " + Utils.indent(0) + ppi1 + 
-				  "\n"; 
+			res += "IF " + e.pp() + "\n" + "THEN \n" + Utils.indent(0) + ppi1
+				  ;
 			if(i2 != null) {
 				for(Instruction i : i2) ppi2 += i.pp();
-				res += "ELSE " + Utils.indent(0) + ppi2;
+				res += "ELSE \n" + Utils.indent(0) + ppi2;
 			}
 			
 		

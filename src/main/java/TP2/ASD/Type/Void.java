@@ -1,5 +1,6 @@
-package TP2.ASD;
+package TP2.ASD.Type;
 
+import TP2.ASD.Type.Type;
 import TP2.Llvm;
 
 public class Void extends Type {

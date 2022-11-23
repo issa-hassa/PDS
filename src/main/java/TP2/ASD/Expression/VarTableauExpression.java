@@ -1,4 +1,4 @@
-package TP2.ASD;
+package TP2.ASD.Expression;
 
 public class VarTableauExpression {
 

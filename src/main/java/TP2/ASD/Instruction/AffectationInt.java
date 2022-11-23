@@ -1,12 +1,9 @@
-package TP2.ASD;
+package TP2.ASD.Instruction;
 
-import com.ibm.icu.text.SymbolTable;
+import TP2.ASD.Expression.Expression;
 
 import TP2.Llvm;
-import TP2.Llvm.IR;
 import TP2.TypeException;
-import TP2.Utils;
-import TP2.ASD.Expression.RetExpression;
 
 /**
  * Concrete class for Expression: add case

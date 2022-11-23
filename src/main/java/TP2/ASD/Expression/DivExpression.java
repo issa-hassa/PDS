@@ -1,15 +1,18 @@
-package TP2.ASD;
+package TP2.ASD.Expression;
 
-import TP2.*;
+import TP2.Llvm;
+import TP2.SymbolTable;
+import TP2.TypeException;
+import TP2.Utils;
 
 /**
  * Concrete class for Expression: add case
  */
-  public class MultExpression extends Expression {
+  public class DivExpression extends Expression {
     Expression left;
     Expression right;
 
-    public MultExpression(Expression left, Expression right) {
+    public DivExpression(Expression left, Expression right) {
       this.left = left;
       this.right = right;
     }
@@ -18,7 +21,7 @@ import TP2.*;
      * Pretty-printer
      */
     public String pp() {
-      return "(" + left.pp() + " * " + right.pp() + ")";
+      return "(" + left.pp() + " / " + right.pp() + ")";
     }
 
     /**
@@ -41,10 +44,10 @@ import TP2.*;
       String result = Utils.newtmp();
 
       // new add instruction result = left + right
-      Llvm.Instruction mult = new Llvm.Mult(leftRet.type.toLlvmType(), leftRet.result, rightRet.result, result);
+      Llvm.Instruction div = new Llvm.Div(leftRet.type.toLlvmType(), leftRet.result, rightRet.result, result);
 
       // append this instruction
-      leftRet.ir.appendCode(mult);
+      leftRet.ir.appendCode(div);
 
       // return the generated IR, plus the type of this expression
       // and where to find its result

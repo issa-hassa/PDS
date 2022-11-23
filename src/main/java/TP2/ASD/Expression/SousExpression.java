@@ -1,18 +1,15 @@
-package TP2.ASD;
+package TP2.ASD.Expression;
 
-import TP2.Llvm;
-import TP2.SymbolTable;
-import TP2.TypeException;
-import TP2.Utils;
+import TP2.*;
 
 /**
  * Concrete class for Expression: add case
  */
-  public class DivExpression extends Expression {
+  public class SousExpression extends Expression {
     Expression left;
     Expression right;
 
-    public DivExpression(Expression left, Expression right) {
+    public SousExpression(Expression left, Expression right) {
       this.left = left;
       this.right = right;
     }
@@ -21,7 +18,7 @@ import TP2.Utils;
      * Pretty-printer
      */
     public String pp() {
-      return "(" + left.pp() + " / " + right.pp() + ")";
+      return "(" + left.pp() + " - " + right.pp() + ")";
     }
 
     /**
@@ -44,10 +41,10 @@ import TP2.Utils;
       String result = Utils.newtmp();
 
       // new add instruction result = left + right
-      Llvm.Instruction div = new Llvm.Div(leftRet.type.toLlvmType(), leftRet.result, rightRet.result, result);
+      Llvm.Instruction sous = new Llvm.Sous(leftRet.type.toLlvmType(), leftRet.result, rightRet.result, result);
 
       // append this instruction
-      leftRet.ir.appendCode(div);
+      leftRet.ir.appendCode(sous);
 
       // return the generated IR, plus the type of this expression
       // and where to find its result

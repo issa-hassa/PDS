@@ -36,9 +36,9 @@ public class Main {
 
       // Parse
       Program ast = parser.program().out;
-      /*System.out.println("____________PP___________");
+      System.out.println("____________PP___________");
       System.out.println(ast.pp());
-      System.out.println("_________________________");*/
+      System.out.println("_________________________");
 
       // Pretty-print the program (to debug parsing, if you implemented it!)
       // System.err.println(ast.pp());

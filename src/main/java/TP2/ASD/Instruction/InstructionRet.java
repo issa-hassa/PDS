@@ -1,7 +1,7 @@
-package TP2.ASD;
+package TP2.ASD.Instruction;
 
+import TP2.ASD.Expression.Expression;
 import TP2.Llvm.IR;
-import TP2.Llvm.Ret;
 import TP2.Llvm;
 import TP2.SymbolTable;
 import TP2.TypeException;
@@ -14,7 +14,7 @@ public class InstructionRet extends Instruction {
 	@Override
 	public String pp() {
 		
-		return "RETURN + " +e.pp();
+		return "RETURN  " +e.pp();
 	}
 
 	@Override

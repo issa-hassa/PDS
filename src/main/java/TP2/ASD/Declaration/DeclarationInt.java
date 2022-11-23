@@ -1,7 +1,8 @@
-package TP2.ASD;
+package TP2.ASD.Declaration;
 
 import TP2.*;
 import TP2.Llvm.IR;
+import TP2.ASD.Type.*;
 
 
 public class DeclarationInt extends Declaration{

@@ -1,5 +1,6 @@
-package TP2.ASD;
+package TP2.ASD.Expression;
 
+import TP2.ASD.Type.*;
 import TP2.Llvm;
 import TP2.SymbolTable;
 

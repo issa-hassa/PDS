@@ -1,9 +1,8 @@
 package TP2.ASD;
 
-import java.util.List;
-
 import TP2.*;
-import TP2.Llvm.IR;
+import TP2.ASD.Expression.Expression;
+import TP2.ASD.Instruction.InstructionFunc;
 
 
 public class Program {

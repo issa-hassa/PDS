@@ -1,4 +1,4 @@
-package TP2.ASD;
+package TP2.ASD.Instruction;
 
 import TP2.*;
 
