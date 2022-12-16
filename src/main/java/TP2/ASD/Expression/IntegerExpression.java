@@ -13,7 +13,7 @@ public class IntegerExpression extends Expression {
     this.value = value;
   }
 
-  public String pp() {
+  public String pp(int profondeur) {
     return "" + value;
   }
 

@@ -1,8 +1,8 @@
 parser grammar VSLParser;
 
 options {
-  language = Java;
-  tokenVocab = VSLLexer;
+	language = Java;
+	tokenVocab = VSLLexer;
 }
 
 @header {
@@ -12,106 +12,164 @@ options {
   import java.util.Arrays;
 }
 
-
 // TODO : other rules
 
-program returns [TP2.ASD.Program out]
-    : i = instructionfunction    EOF { $out = new TP2.ASD.Program($i.out); } // TODO : change when you extend the language
-    ;
+program
+	returns[TP2.ASD.Program out]:
+	i = listFunc EOF { $out = new TP2.ASD.Program($i.out); };
+// TODO : change when you extend the language
 
+// listFuncProtoreturns[ArrayList<TP2.ASD.Instruction.Instruction> out]: {$out = new ArrayList<>();}
+// ( p = listProto {$out.addAll($p.out);}
 
-listInstructions returns [ArrayList<TP2.ASD.Instruction.Instruction> out]
-	:{$out = new ArrayList<>();} (d=declarations { $out.addAll($d.out);})?  i=instructions { $out.addAll($i.out);}
-	;
-instructionRet returns [TP2.ASD.Instruction.Instruction  out] :
+// )? (f = listFunc {$out.addAll($f.out);})?;
+
+listFunc
+	returns[ArrayList<TP2.ASD.Instruction.Instruction> out]:
+	{$out = new ArrayList<>();}
+	 (f = instructionfunction {$out.add($f.out);} )*;
+instructionRet
+	returns[TP2.ASD.Instruction.Instruction  out]:
 	RETURN e = expression {$out = new TP2.ASD.Instruction.InstructionRet($e.out);};
-	
 
-instructions returns [ArrayList<TP2.ASD.Instruction.Instruction> out]
-	:{$out = new ArrayList<>();} i=instruction {$out.add($i.out) ;} (i=instruction  {$out.add($i.out) ;})*
-	;
+instructions
+	returns[TP2.ASD.Instruction.Instruction out]
+	@init{
+	 ArrayList<TP2.ASD.Expression.Expression> inst = new ArrayList<>();
+	}
+	:
+    (d = declarations { inst.addAll($d.out);})?
+    (i = instruction {inst.add($i.out);} |e=expression {inst.add($e.out);})+
+    {$out = new TP2.ASD.Instruction.InstructionList(inst);}
+    ;
 
-	
-declarations returns [List<TP2.ASD.Declaration.Declaration> out]:
-	{$out = new ArrayList<>(); } (VAR d=declaration {$out.add($d.out);} (VG  d=declaration {$out.add($d.out);})*);
-	
+declarations
+	returns[List<TP2.ASD.Declaration.Declaration> out]:
+	{$out = new ArrayList<>(); } (
+		VAR d = declaration {$out.add($d.out);} (
+			VG d = declaration {$out.add($d.out);}
+		)*
+	);
 
-	
-declaration returns [ TP2.ASD.Declaration.Declaration out]
-	:IDENT { $out = new TP2.ASD.Declaration.DeclarationInt ($IDENT.getText()); }
-	|IDENT LB INTEGER RB {$out = new TP2.ASD.Declaration.DeclarationTab($IDENT.getText(), $INTEGER.int);}
-	;
-		
+declaration
+	returns[ TP2.ASD.Declaration.Declaration out]:
+	IDENT { $out = new TP2.ASD.Declaration.DeclarationInt ($IDENT.getText()); }
+	| IDENT LB INTEGER RB {$out = new TP2.ASD.Declaration.DeclarationTab($IDENT.getText(), $INTEGER.int);
+		};
 
-instruction returns[TP2.ASD.Instruction.Instruction out] :
+instruction
+	returns[TP2.ASD.Instruction.Instruction out]:
 	a = affectation { $out = $a.out; }
-	|i = instructionif { $out = $i.out ;}
-	|f = instructionfunction    { $out = $f.out ;}
-	|w = instructionwhile { $out = $w.out; }
-	|b = instructionBlock {$out = $b.out;  }
-	//|r = instructionread { $out = $r.out; }
-	//|PRINT p = instructionprint { $out = $p.out ;}
+	| i = instructionif { $out = $i.out ;}
+	| f = instructionfunction { $out = $f.out ;}
+	| w = instructionwhile { $out = $w.out; }
+	| b = instructionBlock {$out = $b.out;  }
+	| ret = instructionRet {$out = $ret.out;  }
+	| PRINT p = instructionprint { $out = $p.out ;}
+	| READ r = instructionRead { $out = $r.out ;};
 
-	;
+instructionRead
+	returns[TP2.ASD.Instruction.Instruction out]:
+	{ ArrayList<String> idents = new ArrayList<>(); } (
+		i = IDENT {idents.add($i.getText());}
+	)+ { $out = new  TP2.ASD.Instruction.InstructionRead(idents) ; };
 
-instructionBlock returns [TP2.ASD.Instruction.Instruction out] :
-    LC  i = listInstructions  RC { $out = new TP2.ASD.Instruction.InstructionBlock($i.out); };
-									
+instructionprint
+	returns[TP2.ASD.Instruction.Instruction out]:
+	printItems {$out = new  TP2.ASD.Instruction.InstructionPrint($printItems.out) ;};
 
-//instructionprint [ArrayList<TP2.ASD.Expression.Expression>expr, ArrayList<String> texts] returns [TP2.ASD.Instruction.Instruction out] :
-//	(TEXT {$texts.add(TEXT.text());} | e = expression { $expr.add($e.out);})* {$out = new TP2.ASD.InstructionPrint($expr, texts);};
-	
+printItems
+	returns[ArrayList <TP2 .ASD .Expression .Expression> out]:
+	{$out = new ArrayList<>();} e = printItem {$out.add($e.out); } (
+		VG e = printItem {$out.add($e.out);}
+	)*;
+printItem
+	returns[TP2.ASD.Expression.Expression out]:
+	t = stringConst {$out = $t.out;}
+	| e = expression { $out = $e.out;};
 
-affectation returns [TP2.ASD.Instruction.Instruction out]
-	: IDENT AFFSYMBOL e=expression {$out = new TP2.ASD.Instruction.AffectationInt($IDENT.getText(),$e.out);};
+stringConst
+	returns[TP2.ASD.Expression.Expression out]:
+	TEXT { $out = new TP2.ASD.Expression.TextExpression($TEXT.getText()); };
 
-instructionif  returns [TP2.ASD.Instruction.Instruction out]
-	:IF e = expression THEN i = instructions FI {$out = new TP2.ASD.Instruction.InstructionIf($e.out,$i.out); }
-	
-	|IF e = expression THEN i = instructions   ELSE i2 = instructions FI  {$out = new TP2.ASD.Instruction.InstructionIf($e.out,$i.out,$i2.out); }
-;
-
-
-instructionfunction returns [TP2.ASD.Instruction.InstructionFunc out]: FUNC t=type id=IDENT LP l = listArg* RP  LC i = corps RC {$out = new TP2.ASD.Instruction.InstructionFunc($id.getText(),$t.out,$l.out,$i.out);} ;
+instructionBlock
+	returns[TP2.ASD.Instruction.Instruction out]:
+	LC i = instructions RC { $out = new TP2.ASD.Instruction.InstructionBlock($i.out);};
 
 
-corps  returns [ArrayList<TP2.ASD.Instruction.Instruction> out] :
-	{$out = new ArrayList<TP2.ASD.Instruction.Instruction>();} i = listInstructions iret = instructionRet {$out.addAll($i.out); $out.add($iret.out);};
+affectation
+	returns[TP2.ASD.Instruction.Instruction out]:
+	IDENT AFFSYMBOL e = expression {$out = new TP2.ASD.Instruction.AffectationInt($IDENT.getText(),$e.out);
+		};
 
-listArg returns [ArrayList<String> out] :{$out = new ArrayList<String>();} IDENT {$out.add($IDENT.getText());} (VG IDENT  {$out.add($IDENT.getText());}  )* ;
+instructionif
+	returns[TP2.ASD.Instruction.Instruction out]:
+	IF e = expression THEN i = instructions FI {$out = new TP2.ASD.Instruction.InstructionIf($e.out,$i.out);
+		}
+	| IF e = expression THEN i = instructions ELSE i2 = instructions FI {$out = new TP2.ASD.Instruction.InstructionIf($e.out,$i.out,$i2.out); 
+		};
 
-type  returns [TP2.ASD.Type.Type out]:
+instructionfunction
+	returns[TP2.ASD.Instruction.Instruction out]:
+	FUNC t = type id = IDENT LP l = listArg RP b = instructionBlock {$out = new TP2.ASD.Instruction.InstructionFunc($id.getText(),$t.out,$l.out,$b.out);
+		}
+	|
+	FUNC t = type id = IDENT LP l = listArg RP  i= instruction {$out = new TP2.ASD.Instruction.InstructionFunc($id.getText(),$t.out,$l.out,$i.out);
+    		}
+	| PROTO t = type id = IDENT LP l = listArg RP {$out = new TP2.ASD.Instruction.InstructionProto($id.getText(),$t.out,$l.out);
+		};
+
+
+listArg
+	returns[ArrayList<String> out]:
+	{$out = new ArrayList<String>();} (
+		IDENT {$out.add($IDENT.getText());} (
+			VG IDENT {$out.add($IDENT.getText());}
+		)*
+	)?;
+
+type
+	returns[TP2.ASD.Type.Type out]:
 	VAR {$out = new TP2.ASD.Type.Int();}
-	|VOID {$out = new TP2.ASD.Type.Void();}
-	;
+	| VOID {$out = new TP2.ASD.Type.Void();};
 
+instructionwhile
+	returns[TP2.ASD.Instruction.Instruction out]:
+	WHILE e = expression DO s = instructionBlock DONE {$out = new TP2.ASD.Instruction.InstructionWhile($e.out,$s.out);
+		};
 
+listeExpression
+	returns[ArrayList<TP2.ASD.Expression.Expression> out]:
+	{$out = new ArrayList<>();} (
+		e = expression { $out.add($e.out); } (
+			VG e = expression { $out.add($e.out); }
+		)*
+	)*;
 
-instructionwhile returns [TP2.ASD.Instruction.Instruction out] :
-	 WHILE e = expression DO LC s = instruction RC DONE {$out = new TP2.ASD.Instruction.InstructionWhile($e.out,$s.out);};
-	 
-	  
-expression returns [TP2.ASD.Expression.Expression out]
-    :   r=expression PLUS l=factor  { $out = new TP2.ASD.Expression.AddExpression($l.out, $r.out); }
-    
-    | r=expression SOUS l=factor     { $out = new TP2.ASD.Expression.SousExpression($r.out, $l.out); }
-    
-   
-    |  f=factor {$out =$f.out; }
-    
-    ;
+expression
+	returns[TP2.ASD.Expression.Expression out]:
+	r = factor  PLUS l = expression { $out = new TP2.ASD.Expression.AddExpression($l.out, $r.out);
+			}
+	| r = factor  SOUS l  = expression  { $out = new TP2.ASD.Expression.SousExpression($r.out, $l.out);
+		}
+	| f = factor {$out =$f.out; };
 
-factor returns [TP2.ASD.Expression.Expression out]
-    : p=primary { $out = $p.out; }
-    | l=primary MULT r = primary { $out = new TP2.ASD.Expression.MultExpression($l.out, $r.out); }
-    | r = primary DIV l=primary   { $out =new  TP2.ASD.Expression.DivExpression($r.out, $l.out); }
-    // TODO : that's all?
-    ;
+factor
+	returns[TP2.ASD.Expression.Expression out]:
+	p = primary { $out = $p.out; }
+	| l = primary MULT r = primary { $out = new TP2.ASD.Expression.MultExpression($l.out, $r.out); 
+			}
+	| r = primary DIV l = primary { $out =new  TP2.ASD.Expression.DivExpression($r.out, $l.out); 
+			};
+// TODO : that's all?
 
-primary returns [TP2.ASD.Expression.Expression out]
-    : INTEGER { $out = new TP2.ASD.Expression.IntegerExpression($INTEGER.int); }
-    | LP e=expression RP { $out = $e.out ;}
-    |IDENT {$out = new TP2.ASD.Expression.VarIntExpression($IDENT.getText());}
-    ;
-    // TODO : that's all?
-    
+primary
+	returns[TP2.ASD.Expression.Expression out]:
+	INTEGER { $out = new TP2.ASD.Expression.IntegerExpression($INTEGER.int); }
+	| LP e = expression RP { $out = $e.out ;}
+	| IDENT {$out = new TP2.ASD.Expression.VarIntExpression($IDENT.getText());}
+	| i = IDENT LP l = listeExpression RP {$out  = new TP2.ASD.Expression.AppelFun($i.getText(),$l.out);
+		};
+
+// TODO : that's all?
+

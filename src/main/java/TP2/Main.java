@@ -2,6 +2,7 @@ package TP2;
 
 import java.nio.file.Paths;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -15,6 +16,7 @@ import TP2.ASD.Program;
  */
 public class Main {
   public static void main(String[] args) {
+
     try {
       // Set input
       CharStream input;
@@ -36,9 +38,9 @@ public class Main {
 
       // Parse
       Program ast = parser.program().out;
-      System.out.println("____________PP___________");
+      /*System.out.println("____________PP___________");
       System.out.println(ast.pp());
-      System.out.println("_________________________");
+      System.out.println("_________________________");*/
 
       // Pretty-print the program (to debug parsing, if you implemented it!)
       // System.err.println(ast.pp());

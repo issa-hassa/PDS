@@ -14,7 +14,7 @@ public class VarIntExpression extends Expression {
 		this.varname = name;
 	}
 	@Override
-	public String pp() {
+	public String pp(int profondeur) {
 		
 		return this.varname +" ";
 	}
@@ -23,11 +23,19 @@ public class VarIntExpression extends Expression {
 	public RetExpression toIR(SymbolTable table) throws TypeException {
 		List<Llvm.Instruction> code = Llvm.empty();
 		String resultat ="";
-		if(table.lookup(varname) == null) throw new RuntimeException("varible inconnue : " +varname);
+		SymbolTable.Symbol var = table.lookup(varname);
+
+		if(var == null) throw new RuntimeException("varible inconnue : " +varname);
         else{
         	resultat = Utils.newtmp();
         }
-		code.add(new Llvm.VarIntExpression(varname,resultat));
+		if(var instanceof SymbolTable.PoinTeurSymbol){
+
+			code.add(new Llvm.VarIntExpression(new Llvm.IntPointeur(),((SymbolTable.PoinTeurSymbol) var).getV().getIdent(),resultat));
+		}
+		else {
+			code.add(new Llvm.VarIntExpression(new Llvm.Int(),varname,resultat));
+		}
 		Llvm.IR ir = new Llvm.IR(Llvm.empty(), code);
 		return new RetExpression(ir,new Int(),resultat);
 	}

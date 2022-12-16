@@ -4,47 +4,53 @@ import java.util.ArrayList;
 
 import TP2.*;
 import TP2.ASD.Expression.Expression;
+import TP2.ASD.Type.Type;
+import TP2.ASD.Type.Void;
 import TP2.Llvm.IR;
 import TP2.ASD.Expression.Expression.RetExpression;
 
 public class InstructionIf extends Instruction {
 	Expression e;
-	ArrayList<Instruction> i1;
-	ArrayList<Instruction> i2;
+	InstructionList i1;
+	InstructionList i2;
+	Type type;
 	
-	
-	public InstructionIf(Expression e,ArrayList<Instruction> i1){
+	public InstructionIf(Expression e,Instruction i1){
 		this.e = e;
-		this.i1 = i1;
+		this.i1 = (InstructionList)i1;
 	}
-	public InstructionIf(Expression e,ArrayList<Instruction> i1,ArrayList<Instruction> i2){
+	public InstructionIf(Expression e,Instruction i1,Instruction i2){
 		this.e = e;
-		this.i1 = i1;
-		this.i2 = i2;
+		this.i1 = (InstructionList)i1;
+		this.i2 = (InstructionList)i2;
 		
 	}
-	
+
+	public void verifType(Type type) {
+	    this.type = type;
+	}
 	@Override
 	public String pp(int profondeur) {
-		String ppi1 = "";
-		String ppi2 = "";
-		String res = "";
-		for(Instruction i : i1) ppi1 += i.pp(profondeur + 1);
-			res =Utils.indent(profondeur)+ res;
-			res += "IF " + e.pp() + "\n"+Utils.indent(profondeur) + "THEN \n" + ppi1
+		StringBuilder  ppi1 = new StringBuilder();
+		StringBuilder ppi2 = new StringBuilder();
+		StringBuilder res = new StringBuilder();
+	 	ppi1.append(i1.pp(profondeur + 1));
+			res.append(Utils.indent(profondeur)+ res);
+			res.append("IF " + e.pp(0) + "\n"+Utils.indent(profondeur) + "THEN \n" + ppi1);
 				  ;
 			if(i2 != null) {
-				for(Instruction i : i2) ppi2 += i.pp(profondeur+1);
-				res += Utils.indent(profondeur);
-				res += "ELSE \n" + Utils.indent(profondeur) + ppi2;
+
+			 ppi2.append(i2.pp(profondeur+1));
+				res.append(Utils.indent(profondeur));
+				res.append("ELSE \n" + Utils.indent(profondeur) + ppi2);
 			}
 			
 		
-		return res;
+		return res.toString();
 	}
 
 	@Override
-	public IR toIR(SymbolTable tab) throws TypeException {
+	public RetExpression toIR(SymbolTable tab) throws TypeException {
 		Llvm.IR ir =new Llvm.IR(Llvm.empty(),Llvm.empty());
 		RetExpression irE = e.toIR(tab);
 		
@@ -65,28 +71,22 @@ public class InstructionIf extends Instruction {
 		}
 		
 		ir.appendCode(new Llvm.Label(branchIF));
-		for(Instruction i : i1){
-       	 ir.append(i.toIR(tab)); 
-       }
+		i1.verifType(this.type);
+		ir.append(i1.toIR(tab).ir);
 		
 		ir.appendCode(new Llvm.Br(branchFI));
 		
 		
-		if(i2 == null) {
-			ir.appendCode(new Llvm.Label(branchFI));
-		}
-		 else{ 
+
+		if(i2 != null){
+				i2.verifType(this.type);
 	            ir.appendCode(new Llvm.Label(branchElse));
-	            for(Instruction i : i2){
-	            	 ir.append(i.toIR(tab)); 
-	            }
-	           
+	            ir.append(i2.toIR(tab).ir);
 	            ir.appendCode(new Llvm.Br(branchFI));
-	            ir.appendCode(new Llvm.Label(branchFI)); 
 	        }
-		
-		
-		return ir;
+		ir.appendCode(new Llvm.Label(branchFI));
+
+		return new RetExpression(ir,new Void(),"if");
 	}
 	
 }

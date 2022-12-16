@@ -18,14 +18,14 @@ public class DeclarationTab extends Declaration{
         return "INT "+value+"["+size+"] \n";
     }
 
-    public Llvm.IR toIR(SymbolTable tab) throws TypeException {
+    public RetExpression toIR(SymbolTable tab) throws TypeException {
         Llvm.IR ir = new Llvm.IR(Llvm.empty(), Llvm.empty());
         SymbolTable.TabVariableSymbol vSymbol = new SymbolTable.TabVariableSymbol(new PointeurInt(), value, size);
          if(!tab.add(vSymbol)){
-                throw new RuntimeException(value+" already is the Symbol Tab.");
+                throw new RuntimeException(value+" already in the Symbol Tab.");
             }
             ir.appendCode(new Llvm.DeclarationTab(value, size));
         
-        return ir;
+        return new RetExpression(ir,new PointeurInt(),"");
     }    
 }

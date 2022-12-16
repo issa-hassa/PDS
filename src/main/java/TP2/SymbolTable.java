@@ -3,6 +3,7 @@ package TP2;
 import java.util.Map;
 
 import TP2.ASD.Type.Type;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import java.util.HashMap;
 import java.util.List;
@@ -102,13 +103,15 @@ public class SymbolTable {
     /**
      * false if declared but not defined
      */
-    boolean defined; 
+    boolean defined;
 
-    /**
+
+
+      /**
      * Declares a function symbol
      * @param returnType return type of the function
      * @param ident name of the function
-     * @param arguments list of arguments of the function. 
+     * @param arguments list of arguments of the function.
      * @param defined false if declared but not defined
      */
     public FunctionSymbol(Type returnType, String ident, List<VariableSymbol> arguments, boolean defined) {
@@ -128,9 +131,55 @@ public class SymbolTable {
         o.arguments.equals(this.arguments) &&
         o.defined == this.defined;
     }
-  }
 
-  
+    public int getArgsSize() {
+        return this.arguments.size();
+    }
+    public boolean equalsNotDefined(Object obj) {
+        if(obj == null) return false;
+        if(obj == this) return true;
+        if(!(obj instanceof FunctionSymbol)) return false;
+        FunctionSymbol o = (FunctionSymbol) obj;
+        return o.type.equals(this.type) &&
+                o.ident.equals(this.ident) &&
+                o.arguments.size() == (this.arguments.size()) &&
+                this.defined == false;
+    }
+      public void setDefined(boolean defined) {
+          this.defined = defined;
+      }
+}
+  public static class PoinTeurSymbol extends Symbol{
+    // Type type;
+    VariableSymbol v;
+    /**
+     * A variable symbol
+     *
+     * @param ident the name of the symbol
+     */
+    public PoinTeurSymbol(VariableSymbol symbol, String ident) {
+      this.v = symbol;
+      this.ident = ident;
+    }
+
+
+    public Type getType() {
+      return v.type;
+    }
+
+    public VariableSymbol getV() {
+      return v;
+    }
+
+    @Override public boolean equals(Object obj) {
+      if(obj == null) return false;
+      if(obj == this) return true;
+      if(!(obj instanceof VariableSymbol)) return false;
+      VariableSymbol o = (VariableSymbol) obj;
+      return o.type.equals(this.v.type) &&
+              o.ident.equals(this.ident);
+    }
+  }
   /**
    * Store the table as a map
    */
@@ -176,7 +225,12 @@ public class SymbolTable {
     return true;
   }
 
+  public boolean lookInTable(Symbol sym){
+    return this.table.get(sym.ident) != null;
+  }
+
   /**
+   *
    * Remove a symbol
    * @param ident the name of the symbol to remove
    * @return false if the symbol is not in the table (without looking at parent's)
@@ -211,4 +265,34 @@ public class SymbolTable {
     return o.table.equals(this.table) &&
       ((o.parent == null && this.parent == null) || o.parent.equals(this.parent));
   }
+
+  @Override
+    public String toString() {
+      String res = "";
+      for (Map.Entry<String, Symbol> s : this.table.entrySet()) {
+          String ident = s.getKey();
+
+          if (s.getValue() instanceof FunctionSymbol) {
+              if(((FunctionSymbol) s.getValue()).defined){
+                  res += ident + " cat = function| type = " + ((FunctionSymbol) s.getValue()).type + "\n";
+              }
+              else {
+                  res += ident + " cat = proto| type = " + ((FunctionSymbol) s.getValue()).type + "\n";
+
+              }
+
+          }
+          if (s.getValue() instanceof VariableSymbol) {
+              res += ident + " cat = variable | type = " + ((VariableSymbol) s.getValue()).type + "\n";
+          }
+          if (s.getValue() instanceof TabVariableSymbol) {
+              res += ident + " cat = tab | type = " + ((TabVariableSymbol) s.getValue()).type + "\n";
+          }
+
+
+      }
+      return res;
+  }
+
+
 }

@@ -41,10 +41,11 @@ WHILE : 'WHILE';
 DO : 'DO';
 DONE : 'DONE';
 AFFSYMBOL : ':=';
-PROTYPESYMBOLE : 'PROTO';
+PROTO : 'PROTO';
 FUNC : 'FUNC';
+PRINT : 'PRINT';
+READ : 'READ';
 
-// TODO : other keywords
 
 // other tokens (no conflict with keywords in VSL)
 IDENT   : LETTER (LETTER|DIGIT)*;

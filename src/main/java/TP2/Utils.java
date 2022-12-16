@@ -82,8 +82,8 @@ public class Utils {
    */
   public static class LLVMStringConstant {
     String str;
-    int length;
-    LLVMStringConstant(String str, int length) {
+    public int length;
+    public LLVMStringConstant(String str, int length) {
       this.str = str;
       this.length = length;
     }

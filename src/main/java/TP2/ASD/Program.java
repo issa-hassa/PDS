@@ -2,23 +2,29 @@ package TP2.ASD;
 
 import TP2.*;
 import TP2.ASD.Expression.Expression;
+import TP2.ASD.Instruction.Instruction;
 import TP2.ASD.Instruction.InstructionFunc;
+
+import java.util.ArrayList;
 
 
 public class Program {
-    Expression e; // What a program contains. TODO : change when you extend the language
-    InstructionFunc f;;
+  //  Expression e; // What a program contains. TODO : change when you extend the language
+    ArrayList<Instruction> list;;
 
-    public Program( InstructionFunc f) {
-      this.f = f;
+    public Program(ArrayList<Instruction> list) {
+        this.list = list;
     }
 
     /**
      * Pretty-printer
      */
     public String pp() {
-    	
-      return f.pp(0);
+    	String res ="";
+        for (Instruction i : list) {
+            res +=i.pp(0);
+        }
+      return res;
     }
 
     /**
@@ -35,7 +41,12 @@ public class Program {
   	//	ir.append(i.toIR(table));
   	//}
      // System.out.println(f== null );
-     ir.append(f.toIR(table));
+        for (Instruction i : list) {
+
+            ir.append(i.toIR(table).ir);
+        }
+
+
 
       return ir;
     }

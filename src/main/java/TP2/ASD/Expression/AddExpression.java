@@ -18,8 +18,8 @@ import TP2.*;
     /**
      * Pretty-printer
      */
-    public String pp() {
-      return "(" + left.pp() + " + " + right.pp() + ")";
+    public String pp(int profondeur) {
+      return "(" + left.pp(profondeur) + " + " + right.pp(profondeur) + ")";
     }
 
     /**

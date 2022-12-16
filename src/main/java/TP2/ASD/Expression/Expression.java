@@ -9,7 +9,7 @@ import TP2.TypeException;
  * Abstract class representing the expressions
  */
 public abstract class Expression {
-    public abstract String pp();
+    public abstract String pp(int profondeur);
     public abstract Expression.RetExpression toIR(SymbolTable table) throws TypeException;
 
     /**

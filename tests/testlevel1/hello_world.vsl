@@ -1,4 +1,7 @@
 FUNC INT main() {
-            PRINT "Hello World"
+               INT n
+               n := 5
+               READ n
+             PRINT  "Input ",n, " between 0 and 11:\n"
 	}
 

@@ -1,4 +1,11 @@
 PROTO INT one()
-FUNC VOID main() { PRINT "one() = ", one() }
-FUNC INT one() RETURN 1
+FUNC VOID main() {
+ INT res, n
+ res := one() * 2
+ PRINT "one() * 2 = ", res
+ }
+FUNC INT one(){
+INT n
+ RETURN one()*2
+}
 

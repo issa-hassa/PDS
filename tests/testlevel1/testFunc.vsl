@@ -1,11 +1,16 @@
+PROTO INT fact(k)
+FUNC VOID main(){
+    PRINT "Fact de 5 vaut :", fact(5)
+
+
+}
+
 FUNC INT fact(n) {
 IF n 
 THEN
-	n :=n*n
-	n := n + 1
-	
+	RETURN n*fact(n-1)
 ELSE
-  n := n/n
+  RETURN 1
  FI
- RETURN n
+ RETURN 0
 }

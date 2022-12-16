@@ -11,8 +11,8 @@ public class Llvm {
   static public class IR {
     /**
      *  IR instructions to be placed before the code (global definitions)
-     */ 
-    List<Instruction> header; 
+     */
+	public List<Instruction> header;
     /**
      *  IR composing the main code
      */ 
@@ -60,6 +60,11 @@ public class Llvm {
       header.add(inst);
       return this;
     }
+	  public IR appendHeader(IR other) {
+		  header.addAll(other.header);
+		  header.addAll(other.code);
+		  return this;
+	  }
 
     public String toString() {
       // This header describe to LLVM the target
@@ -68,6 +73,7 @@ public class Llvm {
         "target triple = \"x86_64-unknown-linux-gnu\"\n" +
         "; External declaration of the printf function\n" +
         "declare i32 @printf(i8* noalias nocapture, ...)\n" +
+		"declare i32 @scanf(i8* noalias nocapture, ... )\n"+
         "\n; Actual code begins\n\n");
 
       for(Instruction inst: header)
@@ -271,14 +277,16 @@ public class Llvm {
   static public class VarIntExpression extends Instruction {
 	    String varname;
 	    String res;
+		Type type;
 
-	    public VarIntExpression(String name, String res){
+	    public VarIntExpression(Llvm.Type type,String name, String res){
 	      this.varname = name;
 	      this.res = res;
+		  this.type = type;
 	    }
 
 	    public String toString() {
-	      return res+" = load i32, i32* %"+varname+"\n";
+	      return res+" = load i32, i32* %" +varname+"\n";
 	    }
 	  }
   static public class DeclarationInt extends Instruction{
@@ -377,28 +385,24 @@ public class Llvm {
   		
   	}
   	static public class instructionFunc extends Instruction {
+
   		String nom;
   		String type;
   		ArrayList<String> args;
   		
   		public instructionFunc(String nom, String type, ArrayList<String> args) {
-  			System.out.println("type= " + type + "nom = " + nom  + "args" + args.toString());
+
   			this.nom = nom;
   			this.args = args;
   			this.type = type;
+
   		}
 		@Override
 		public String toString() {
+			for(int i = 0; i < args.size(); i++){ args.set(i,"i32 %"+args.get(i)); }
 			String res = "define " + type + " @" +nom+"( " ;
-			for(int i = 0; i<args.size();i++) {
-				String s = args.get(i);
-				if(i == args.size() - 1) { res += "i32 %" +s ; }
-				else {
-					res += "i32 %" +s +", ";
-				}
-			}
-			res +=" ) {  \n";
-			
+			res +=String.join(",",this.args) ;
+			res +=" ) {  \n" ;
 			return res;
 		}
   		
@@ -412,9 +416,102 @@ public class Llvm {
         }
 
         public String toString(){
-          return "ret i32  " +eRes;
+          return "ret i32  " +eRes + "\n";
         }
-    }	
+    }
+	static public class AppelFun extends Instruction{
+	  String name;
+	  ArrayList<String> args;
+	  String result;
+	  Type type;
+		public AppelFun(String name,Type type, ArrayList<String> args, String result) {
+			this.name = name;
+			this.args = args;
+			this.result = result;
+			this.type = type;
+		}
+
+
+
+		/**
+		 * @return
+		 */
+		@Override
+		public String toString() {
+			String res ="call "+this.type+" @"+this.name+"(";
+			for (int i = 0; i < args.size(); i++){
+				String s = "i32 " + args.get(i);
+				if(i<args.size() - 1) s+=",";
+				res+=s;
+			}
+			res+=")";
+			if(!(this.type instanceof Void))res = this.result +" = " + res+ "\n";
+			else{
+				res +="\n";
+			}
+			return res;
+		}
+	}
+	static public class Print extends Instruction{
+
+		int length;
+		ArrayList<String> result ;
+		String globalVar;
+
+		public Print(int lengtht, ArrayList<String> result, String globalVar) {
+			this.length = lengtht;
+			this.result = result;
+			this.globalVar = globalVar;
+		}
+
+		/**
+		 * @return
+		 */
+		@Override
+		public String toString() {
+			StringBuilder res =new StringBuilder("call i32 (i8*, ...) @printf (i8* getelementptr inbounds" +
+					"(["+length+ " x i8] , ["+length+" x i8]* "+this.globalVar + ", i64 0, i64 0)");
+
+			for (String s: this.result) {
+				res.append(", i32 "+s);
+			}
+			res.append(")\n");
+
+
+
+			return res.toString();
+		}
+	}
+	static public class Read extends Instruction{
+
+		int length;
+		ArrayList<String> result ;
+		String globalVar;
+
+		public Read(int length, ArrayList<String> result, String globalVar) {
+			this.length = length;
+			this.result = result;
+			this.globalVar = globalVar;
+		}
+
+		/**
+		 * @return
+		 */
+		@Override
+		public String toString() {
+			StringBuilder res =new StringBuilder("call i32 (i8*, ...) @scanf (i8* getelementptr inbounds" +
+					"(["+length+ " x i8] , ["+length+" x i8]* "+this.globalVar + ", i64 0, i64 0)");
+
+			for (String s: this.result) {
+				res.append(", i32 * %"+s);
+			}
+			res.append(")\n");
+
+
+
+			return res.toString();
+		}
+	}
   static public class Br extends Instruction {
       String label;
 
@@ -438,6 +535,31 @@ public class Llvm {
         return label+": \n";
       }
   }
+	static public class Text extends Instruction {
+		String text;
+
+		public Text(String text){
+			this.text = text;
+		}
+
+		public String toString(){
+			return this.text;
+		}
+	}
+	static public class StringConst extends Instruction {
+		Utils.LLVMStringConstant text;
+		String res ;
+
+		public StringConst(Utils.LLVMStringConstant text, String res) {
+			this.text = text;
+			this.res = res;
+		}
+
+
+		public String toString(){
+			return res +" = global [" +this.text.length + " x i8 ] c\"" + this.text.str + "\" \n";
+		}
+	}
   
   static public class LC extends Instruction {
      
@@ -445,7 +567,7 @@ public class Llvm {
      
 
       public String toString(){
-        return "}";
+        return "}\n";
       }
   }
   

@@ -17,8 +17,8 @@ import TP2.*;
     /**
      * Pretty-printer
      */
-    public String pp() {
-      return "(" + left.pp() + " - " + right.pp() + ")";
+    public String pp(int profondeur) {
+      return "(" + left.pp(profondeur) + " - " + right.pp(profondeur) + ")";
     }
 
     /**
@@ -39,7 +39,6 @@ import TP2.*;
 
       // allocate a new identifier for the result
       String result = Utils.newtmp();
-
       // new add instruction result = left + right
       Llvm.Instruction sous = new Llvm.Sous(leftRet.type.toLlvmType(), leftRet.result, rightRet.result, result);
 
