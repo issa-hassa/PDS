@@ -73,7 +73,7 @@ instructionRead
 	{ ArrayList<String> idents = new ArrayList<>(); } (
 		i = IDENT {idents.add($i.getText());}
 	)+ { $out = new  TP2.ASD.Instruction.InstructionRead(idents) ; };
-
+//essai brachne
 instructionprint
 	returns[TP2.ASD.Instruction.Instruction out]:
 	printItems {$out = new  TP2.ASD.Instruction.InstructionPrint($printItems.out) ;};
@@ -94,7 +94,14 @@ stringConst
 
 instructionBlock
 	returns[TP2.ASD.Instruction.Instruction out]:
-	LC i = instructions RC { $out = new TP2.ASD.Instruction.InstructionBlock($i.out);};
+	LC i = instructions RC { $out = new TP2.ASD.Instruction.InstructionBlock($i.out);}
+	;
+
+instructionBlockIF
+	returns[TP2.ASD.Instruction.Instruction out]:
+	 i = instructions  { $out = new TP2.ASD.Instruction.InstructionBlock($i.out);}
+	;
+
 
 
 affectation
@@ -104,10 +111,17 @@ affectation
 
 instructionif
 	returns[TP2.ASD.Instruction.Instruction out]:
-	IF e = expression THEN i = instructions FI {$out = new TP2.ASD.Instruction.InstructionIf($e.out,$i.out);
+	IF e = expression THEN i = instructionBlockIF FI {$out = new TP2.ASD.Instruction.InstructionIf($e.out,$i.out);
 		}
-	| IF e = expression THEN i = instructions ELSE i2 = instructions FI {$out = new TP2.ASD.Instruction.InstructionIf($e.out,$i.out,$i2.out); 
+	| IF e = expression THEN i = instructionBlockIF ELSE i2 = instructionBlockIF FI {$out = new TP2.ASD.Instruction.InstructionIf($e.out,$i.out,$i2.out);
 		};
+
+
+//instructionif
+//	returns[TP2.ASD.Instruction.Instruction out]:
+//	IF e = expression THEN i = instructions FI {$out = new TP2.ASD.Instruction.InstructionIf($e.out,$i.out);}
+//	| IF e = expression THEN i = instructions ELSE i2 = instructions FI {$out = new TP2.ASD.Instruction.InstructionIf($e.out,$i.out,$i2.out);
+//		};
 
 instructionfunction
 	returns[TP2.ASD.Instruction.Instruction out]:

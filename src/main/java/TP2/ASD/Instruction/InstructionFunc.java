@@ -130,7 +130,13 @@ public class InstructionFunc extends Instruction {
 		else {
 
 		   if(!(funcBlock instanceof InstructionRet)){
-			   irRes.append(this.funcBlock.toIR(t).ir);
+			   if((funcBlock instanceof InstructionIf)){
+				   ((InstructionIf)funcBlock).verifType(this.type);
+				   irRes.append(this.funcBlock.toIR(t).ir);
+			   }
+			   else {
+				   irRes.append(this.funcBlock.toIR(t).ir);
+			   }
 			   if(this.type instanceof Void){
 				  if(proto){
 					  irRes.appendHeader(new Llvm.Text("ret "+this.type.toLlvmType()+"\n"));

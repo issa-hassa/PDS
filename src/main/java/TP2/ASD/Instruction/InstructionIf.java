@@ -11,18 +11,20 @@ import TP2.ASD.Expression.Expression.RetExpression;
 
 public class InstructionIf extends Instruction {
 	Expression e;
-	InstructionList i1;
-	InstructionList i2;
+	//InstructionList i1;
+	InstructionBlock i1;
+	//InstructionList i2;
+	InstructionBlock i2;
 	Type type;
 	
 	public InstructionIf(Expression e,Instruction i1){
 		this.e = e;
-		this.i1 = (InstructionList)i1;
+		this.i1 = (InstructionBlock)i1;
 	}
 	public InstructionIf(Expression e,Instruction i1,Instruction i2){
 		this.e = e;
-		this.i1 = (InstructionList)i1;
-		this.i2 = (InstructionList)i2;
+		this.i1 = (InstructionBlock)i1;
+		this.i2 = (InstructionBlock)i2;
 		
 	}
 
