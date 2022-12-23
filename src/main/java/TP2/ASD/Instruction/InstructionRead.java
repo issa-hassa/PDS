@@ -3,6 +3,7 @@ package TP2.ASD.Instruction;
 import TP2.ASD.Expression.Expression;
 import TP2.ASD.Expression.TextExpression;
 import TP2.ASD.Expression.VarIntExpression;
+import TP2.ASD.Type.PointeurInt;
 import TP2.ASD.Type.Void;
 import TP2.Llvm;
 import TP2.SymbolTable;
@@ -45,18 +46,24 @@ public class InstructionRead extends Instruction{
         ArrayList<String> argsIr = new ArrayList<>();
         for (String s : this.args) {
             SymbolTable.Symbol var = tab.lookup(s);
-            if( !(var instanceof SymbolTable.VariableSymbol)){
-                throw new TypeException("type miss match required: INT found: "+ var.getType().pp() );
+            if( (var instanceof SymbolTable.FunctionSymbol)){
+                throw new TypeException("type miss match required: INT found a funtion " );
             }
             if(var == null){
                 throw new TypeException("unknown variable"+ s);
             }
             else{
                 global.append("%d");
-                resultExpr.add(s);
+                if(var instanceof SymbolTable.PoinTeurSymbol){
+                    resultExpr.add(((SymbolTable.PoinTeurSymbol)var).getV().getIdent());
+                }
+                else {
+                    resultExpr.add(s);
+                }
+
             }
         }
-        ir.appendHeader(new Llvm.StringConst(Utils.stringTransform(global.toString()),globalVar));
+        ir.appendGlobals(new Llvm.StringConst(Utils.stringTransform(global.toString()),globalVar));
         ir.appendCode(new Llvm.Read((Utils.stringTransform(global.toString())).length,resultExpr,globalVar));
         return new RetExpression(ir,new Void(),"");
     }

@@ -19,6 +19,7 @@ FUNC INT hanoi(n,delatour,alatour,parlatour)
   INT b
   IF n
   THEN
+   PRINT "Deplacer un disque de \n"
   {
     b := hanoi( n-1, delatour, parlatour, alatour )
     PRINT "Deplacer un disque de ",delatour," a ",alatour,"\n"

@@ -32,6 +32,6 @@ store i32 3, i32* %j25
 %tmp3 = load i32, i32* %k
 %tmp4 = load i32, i32* %l
 call i32 (i8*, ...) @printf (i8* getelementptr inbounds([19 x i8] , [19 x i8]* @.fmt7, i64 0, i64 0), i32 %tmp1, i32 %tmp2, i32 %tmp3, i32 %tmp4)
-ret void
+ret void 
 }
 

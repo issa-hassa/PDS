@@ -13,26 +13,43 @@ public class InstructionRet extends Instruction {
 	Expression e;
 	Type type;
 
-	public InstructionRet(Expression e){
+	public InstructionRet(Expression e,Type type){
+
+		this.type = type;
 		this.e = e;
+	}
+	public InstructionRet(Type type){
+
+		this.type = type;
+
 	}
 	@Override
 	public String pp(int profondeur) {
-		
-		return Utils.indent(profondeur)+ "RETURN  " +e.pp(0);
-	}
-	public void verifType(Type type){
-		this.type = type;
+		StringBuilder res = new StringBuilder(Utils.indent(profondeur)+"RETURN ");
+		if(this.e != null){
+			res.append(e.pp(0));
+		}
+		return res.toString();
 	}
 	@Override
 	public RetExpression toIR(SymbolTable tab) throws TypeException {
 		Llvm.IR ir = new Llvm.IR(Llvm.empty(), Llvm.empty());
-		Expression.RetExpression irE = this.e.toIR(tab);
-		if(!this.type.pp().equals(irE.type.pp())){
-			throw new TypeException("Type miss match required: "+this.type.pp() + " found: "+ irE.type.pp() );
+		if(e != null){
+			Expression.RetExpression irE = this.e.toIR(tab);
+			if(!this.type.equals(irE.type)){
+				throw new TypeException("Type miss match required: "+this.type.pp() + " found: "+ irE.type.pp() );
+			}
+			ir.append(irE.ir);
+			ir.appendCode(new Llvm.Ret(irE.result));
 		}
-		 ir.append(irE.ir);
-		ir.appendCode(new Llvm.Ret(irE.result));
+		else {
+			if(!this.type.equals(new Void())){
+				throw new TypeException("Type miss match required: "+this.type.pp() + " found: "+ " Void");
+			}
+			ir.appendCode(new Llvm.Ret());
+		}
+
+
 		return new RetExpression(ir,new Void(),"");
 	}
 

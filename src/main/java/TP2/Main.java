@@ -4,6 +4,7 @@ import java.nio.file.Paths;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import TP2.ASD.Type.Int;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -16,7 +17,6 @@ import TP2.ASD.Program;
  */
 public class Main {
   public static void main(String[] args) {
-
     try {
       // Set input
       CharStream input;

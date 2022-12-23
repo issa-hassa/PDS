@@ -11,24 +11,24 @@ import TP2.ASD.Expression.Expression.RetExpression;
 
 public class InstructionIf extends Instruction {
 	Expression e;
-	InstructionList i1;
-	InstructionList i2;
-	Type type;
+	//InstructionList i1;
+	InstructionBlock i1;
+	//InstructionList i2;
+	InstructionBlock i2;
+
 	
 	public InstructionIf(Expression e,Instruction i1){
 		this.e = e;
-		this.i1 = (InstructionList)i1;
+		this.i1 = (InstructionBlock)i1;
 	}
 	public InstructionIf(Expression e,Instruction i1,Instruction i2){
 		this.e = e;
-		this.i1 = (InstructionList)i1;
-		this.i2 = (InstructionList)i2;
+		this.i1 = (InstructionBlock)i1;
+		this.i2 = (InstructionBlock)i2;
 		
 	}
 
-	public void verifType(Type type) {
-	    this.type = type;
-	}
+
 	@Override
 	public String pp(int profondeur) {
 		StringBuilder  ppi1 = new StringBuilder();
@@ -71,7 +71,6 @@ public class InstructionIf extends Instruction {
 		}
 		
 		ir.appendCode(new Llvm.Label(branchIF));
-		i1.verifType(this.type);
 		ir.append(i1.toIR(tab).ir);
 		
 		ir.appendCode(new Llvm.Br(branchFI));
@@ -79,7 +78,6 @@ public class InstructionIf extends Instruction {
 		
 
 		if(i2 != null){
-				i2.verifType(this.type);
 	            ir.appendCode(new Llvm.Label(branchElse));
 	            ir.append(i2.toIR(tab).ir);
 	            ir.appendCode(new Llvm.Br(branchFI));

@@ -16,9 +16,11 @@ public class Llvm {
     /**
      *  IR composing the main code
      */ 
-    List<Instruction> code; 
+    List<Instruction> code;
 
-    /**
+	  public List<Instruction> globals;
+
+	  /**
      * Creates an IR based on two lists of instructions
      * @param header the instructions to be placed before the code
      * @param code the main code
@@ -26,6 +28,7 @@ public class Llvm {
     public IR(List<Instruction> header, List<Instruction> code) {
       this.header = header;
       this.code = code;
+	  this.globals = empty();
     }
 
     /**
@@ -36,10 +39,15 @@ public class Llvm {
      * @return
      */
     public IR append(IR other) {
+		globals.addAll(other.globals);
       header.addAll(other.header);
       code.addAll(other.code);
       return this;
     }
+	public IR appendGlobals(Instruction i){
+		this.globals.add(i);
+		return this;
+	}
 
     /**
      * Append an instruction to the IR's code
@@ -61,6 +69,7 @@ public class Llvm {
       return this;
     }
 	  public IR appendHeader(IR other) {
+		  globals.addAll(other.globals);
 		  header.addAll(other.header);
 		  header.addAll(other.code);
 		  return this;
@@ -76,6 +85,10 @@ public class Llvm {
 		"declare i32 @scanf(i8* noalias nocapture, ... )\n"+
         "\n; Actual code begins\n\n");
 
+    for(Instruction inst  : globals){
+		r.append(inst);
+	}
+		r.append("\n\n");
       for(Instruction inst: header)
         r.append(inst);
 
@@ -305,6 +318,32 @@ public class Llvm {
 	   	}
 	   
    	}
+	static public class ExpressionTab extends Instruction{
+		String name;
+		String index;
+		int size;
+
+		String result;
+
+
+		public ExpressionTab(String name,String index,int size, String result){
+			this.name  = name;
+			this.index = index;
+			this.size = size;
+			this.result = result;
+
+		}
+
+		@Override
+		public String toString() {
+			return result+" = getelementptr ["+this.size+" x i32], "+"["+this.size+" x i32]* "
+					+"%"+this.name+", i64 0, i32 " + index
+					+ "\n";
+
+		}
+
+	}
+
   
   static public class DeclarationTab extends Instruction{
 	   String name;
@@ -414,8 +453,14 @@ public class Llvm {
         public Ret(String label) {
           this.eRes = label;
         }
+		public Ret() {
+			this.eRes = null;
+		}
 
         public String toString(){
+			if(eRes == null){
+				return "ret void \n";
+			}
           return "ret i32  " +eRes + "\n";
         }
     }
