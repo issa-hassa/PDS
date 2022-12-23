@@ -54,7 +54,7 @@ public class InstructionPrint extends Instruction{
 
             }
         }
-        ir.appendHeader(new Llvm.StringConst(Utils.stringTransform(global.toString()),globalVar));
+        ir.appendGlobals(new Llvm.StringConst(Utils.stringTransform(global.toString()),globalVar));
         ir.appendCode(new Llvm.Print((Utils.stringTransform(global.toString())).length,resultExpr,globalVar));
         return new RetExpression(ir,new Void(),"print");
     }

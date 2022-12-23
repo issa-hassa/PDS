@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class InstructionList extends Instruction{
     ArrayList<Expression> instructions;
-    Type type;
+
 
 
     public InstructionList(ArrayList<Expression> instructions) {
@@ -32,9 +32,7 @@ public class InstructionList extends Instruction{
         for(Expression i :this.instructions) res.append(i.pp(profondeur));
         return res.toString();
     }
-    public void verifType(Type type) {
-        this.type = type;
-    }
+
     /**
      * @param tab
      * @return
@@ -44,12 +42,6 @@ public class InstructionList extends Instruction{
     public RetExpression toIR(SymbolTable tab) throws TypeException {
         Llvm.IR res = new Llvm.IR(Llvm.empty(),Llvm.empty());
         for(Expression i : this.instructions){
-            if(i instanceof InstructionRet){
-                ((InstructionRet)i).verifType(this.type);
-            }
-            if(i instanceof InstructionIf){
-                ((InstructionIf)i).verifType(this.type);
-            }
             res.append(i.toIR(tab).ir);
         }
         return new RetExpression(res,new Void(),"instrucionList");

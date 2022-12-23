@@ -10,7 +10,7 @@ public class Void extends Type {
 	    }
 
 	    @Override public boolean equals(Object obj) {
-	      return obj instanceof Int;
+	      return obj instanceof Void;
 	    }
 
 	    public Llvm.Type toLlvmType() {

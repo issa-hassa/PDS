@@ -15,7 +15,7 @@ public class InstructionIf extends Instruction {
 	InstructionBlock i1;
 	//InstructionList i2;
 	InstructionBlock i2;
-	Type type;
+
 	
 	public InstructionIf(Expression e,Instruction i1){
 		this.e = e;
@@ -28,9 +28,7 @@ public class InstructionIf extends Instruction {
 		
 	}
 
-	public void verifType(Type type) {
-	    this.type = type;
-	}
+
 	@Override
 	public String pp(int profondeur) {
 		StringBuilder  ppi1 = new StringBuilder();
@@ -73,7 +71,6 @@ public class InstructionIf extends Instruction {
 		}
 		
 		ir.appendCode(new Llvm.Label(branchIF));
-		i1.verifType(this.type);
 		ir.append(i1.toIR(tab).ir);
 		
 		ir.appendCode(new Llvm.Br(branchFI));
@@ -81,7 +78,6 @@ public class InstructionIf extends Instruction {
 		
 
 		if(i2 != null){
-				i2.verifType(this.type);
 	            ir.appendCode(new Llvm.Label(branchElse));
 	            ir.append(i2.toIR(tab).ir);
 	            ir.appendCode(new Llvm.Br(branchFI));

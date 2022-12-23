@@ -26,9 +26,9 @@ public class VarIntExpression extends Expression {
 		SymbolTable.Symbol var = table.lookup(varname);
 
 		if(var == null) throw new RuntimeException("varible inconnue : " +varname);
-        else{
-        	resultat = Utils.newtmp();
-        }
+
+		resultat = Utils.newtmp();
+
 		if(var instanceof SymbolTable.PoinTeurSymbol){
 
 			code.add(new Llvm.VarIntExpression(new Llvm.IntPointeur(),((SymbolTable.PoinTeurSymbol) var).getV().getIdent(),resultat));

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import TP2.ASD.Declaration.DeclarationInt;
 import TP2.ASD.Expression.Expression;
+import TP2.ASD.Expression.IntegerExpression;
+import TP2.ASD.Expression.TextExpression;
 import TP2.ASD.Expression.VarIntExpression;
 import TP2.ASD.Type.Int;
 import TP2.ASD.Type.PointeurInt;
@@ -17,8 +19,8 @@ import TP2.TypeException;
 import TP2.Utils;
 
 public class InstructionFunc extends Instruction {
-	String nom;
-	Type type;
+	final String nom;
+	final Type type;
 	ArrayList<String> args;
 	Instruction funcBlock;
 	
@@ -27,10 +29,12 @@ public class InstructionFunc extends Instruction {
 		this.args = args;
 		this.type = type;
 		this.funcBlock = funcBlock;
+
 	}
 	
 	@Override
 	public String pp(int profondeur) {
+
 		StringBuilder res =new StringBuilder( "Func " + this.type.pp() + " " + nom +"(");
 		res.append(String.join(",",args));
 		res.append(")\n");
@@ -39,17 +43,21 @@ public class InstructionFunc extends Instruction {
 		return res.toString();
 	}
 	public boolean addToTable(SymbolTable tab,ArrayList<VariableSymbol> argsS) throws RuntimeException  {
-		//argsS.forEach(e ->tab.add(e) );
+
 		SymbolTable.FunctionSymbol f = new SymbolTable.FunctionSymbol(this.type,this.nom, argsS,true);
 		SymbolTable.Symbol exist = tab.lookup(this.nom);
 		if((exist != null) && (exist instanceof SymbolTable.FunctionSymbol) ){
 			SymbolTable.FunctionSymbol fexist = (SymbolTable.FunctionSymbol) exist;
-			if(fexist.equals(f)){ throw new  RuntimeException("La fonction + "+this.nom +" est déjà declarée"); }
-
-			else if(fexist.equalsNotDefined(f)){
+			if(fexist.equals(f)){ throw new  RuntimeException("Multiple declaration of the fonction + "+this.nom ); }
+			if(fexist.incomArg(f)){
+				throw new RuntimeException("The fonction "+this.nom + " is incompatible with the prototype");
+			}
+			if(fexist.equalsNotDefined(f)){
 				fexist.setDefined(true);
 				return true;
 			}
+
+
 
 		}
 		else {
@@ -70,7 +78,7 @@ public class InstructionFunc extends Instruction {
 		for(String s : args){
 			String argVar = Utils.newlab(s);
 			DeclarationInt d = new DeclarationInt(argVar);
-			AffectationInt a = new AffectationInt(argVar, new VarIntExpression(s));
+			AffectationInt a = new AffectationInt(argVar, "%"+s);
 			t.add(new VariableSymbol(new Int(),s));
 			if(proto){
 				irInstructions.appendHeader(d.toIR(t).ir);
@@ -90,93 +98,60 @@ public class InstructionFunc extends Instruction {
 		if(proto){
 			irRes.appendHeader(func);
 			irRes.appendHeader(irInstructions);
+			irRes.appendHeader(this.funcBlock.toIR(t).ir);
+			if(funcBlock instanceof InstructionBlock) {
+				InstructionBlock b = (InstructionBlock) funcBlock;
+				if (!(b.getInstructions().get(b.getInstructions().size() - 1) instanceof InstructionRet)) {
+					if (this.type instanceof Void) {
+						irRes.appendHeader(new Llvm.Ret());
+					} else {
+						Expression zero =new IntegerExpression(0);
+						RetExpression zeroIr = zero.toIR(t);
+						irRes.appendHeader(new Llvm.Ret(zeroIr.result));
+					}
+				}
+			}
+			else {
+			     if(!(funcBlock instanceof InstructionRet)){
+					if (this.type instanceof Void) {
+						irRes.appendHeader(new Llvm.Ret());
+					} else {
+						Expression zero =new IntegerExpression(0);
+						RetExpression zeroIr = zero.toIR(t);
+						irRes.appendHeader(new Llvm.Ret(zeroIr.result));					}
+				}
+			}
+			irRes.appendHeader(new Llvm.LC());
 		}
 		else {
 			irRes.appendCode(func);
 			irRes.append(irInstructions);
-		}
+			irRes.append(this.funcBlock.toIR(t).ir);
+			if(funcBlock instanceof InstructionBlock) {
+				InstructionBlock b = (InstructionBlock) funcBlock;
+				if (!(b.getInstructions().get(b.getInstructions().size() - 1) instanceof InstructionRet)) {
+					if (this.type instanceof Void) {
+						irRes.appendCode(new Llvm.Ret());
 
-		if(this.funcBlock instanceof  InstructionBlock) {
-
-			InstructionBlock b = (InstructionBlock) this.funcBlock;
-			b.verifType(this.type);
-
-			if(proto){
-				irRes.appendHeader(this.funcBlock.toIR(t).ir);
-			}
-			else{
-				irRes.append(this.funcBlock.toIR(t).ir);
-
-			}
-			if(!(b.getInstructions().get(b.getInstructions().size() - 1) instanceof InstructionRet)){
-				if(this.type instanceof Void){
-					if(proto){
-						irRes.appendHeader(new Llvm.Text("ret "+this.type.toLlvmType()+"\n"));
-					}
-					else {
-						irRes.appendCode(new Llvm.Text("ret "+this.type.toLlvmType()+"\n"));
-					}
-				}
-				else {
-					if(proto){
-						irRes.appendHeader(new Llvm.Text("ret "+this.type.toLlvmType() +" 0\n"));
-					}
-					else {
-						irRes.appendCode(new Llvm.Text("ret "+this.type.toLlvmType() +" 0\n"));
+					} else {
+						Expression zero =new IntegerExpression(0);
+						RetExpression zeroIr = zero.toIR(t);
+						irRes.appendCode(new Llvm.Ret(zeroIr.result));
 					}
 				}
 			}
-		}
-		else {
-
-		   if(!(funcBlock instanceof InstructionRet)){
-			   if((funcBlock instanceof InstructionIf)){
-				   ((InstructionIf)funcBlock).verifType(this.type);
-				   irRes.append(this.funcBlock.toIR(t).ir);
-			   }
-			   else {
-				   irRes.append(this.funcBlock.toIR(t).ir);
-			   }
-			   if(this.type instanceof Void){
-				  if(proto){
-					  irRes.appendHeader(new Llvm.Text("ret "+this.type.toLlvmType()+"\n"));
-				  }
-				  else {
-					  irRes.appendCode(new Llvm.Text("ret "+this.type.toLlvmType()+"\n"));
-				  }
-			   }
-			   else {
-				   if(proto){
-					   irRes.appendHeader(new Llvm.Text("ret "+this.type.toLlvmType() +" 0\n"));
-				   }
-				   else {
-					   irRes.appendCode(new Llvm.Text("ret "+this.type.toLlvmType() +" 0\n"));
-				   }
-			   }
-		   }
-		   else{
-			   ((InstructionRet)funcBlock).verifType(this.type);
-			   if(proto){
-				   irRes.appendHeader(this.funcBlock.toIR(t).ir);
-			   }
-			   else {
-				   irRes.append(this.funcBlock.toIR(t).ir);
-			   }
-		   }
-
-
-		}
-
-
-
-		if(proto){
-			irRes.appendHeader(new Llvm.LC());
-		}
-		else {
+			else if(!(funcBlock instanceof InstructionRet)){
+				if (this.type instanceof Void) {
+					irRes.appendCode(new Llvm.Ret());
+				} else {
+					Expression zero =new IntegerExpression(0);
+					RetExpression zeroIr = zero.toIR(t);
+					irRes.appendCode(new Llvm.Ret(zeroIr.result));
+				}
+			}
 			irRes.appendCode(new Llvm.LC());
 
 		}
-
 		return new RetExpression(irRes,this.type,this.nom);
 	}
 

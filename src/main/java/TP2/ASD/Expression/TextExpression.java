@@ -33,7 +33,7 @@ public class TextExpression extends Expression{
      */
     @Override
     public RetExpression toIR(SymbolTable table) throws TypeException {
-        RetExpression ir = new RetExpression(new Llvm.IR(Llvm.empty(),Llvm.empty()),new Void(),"");
+        RetExpression ir = new RetExpression(new Llvm.IR(Llvm.empty(),Llvm.empty()),new Int(),"");
         ir.ir.appendCode(new Llvm.Text(this.text));
         return ir;
     }

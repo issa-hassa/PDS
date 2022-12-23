@@ -27,15 +27,12 @@ public class InstructionBlock extends Instruction {
         instructions.pp(profondeur + 1);
        return res + Utils.indent(profondeur)+ " }";
     }
-    public void verifType(Type type) {
-        this.type = type;
-    }
+
 
     @Override
     public RetExpression toIR(SymbolTable tab) throws TypeException {
         SymbolTable t = new SymbolTable(tab);
         Llvm.IR ir = new Llvm.IR(Llvm.empty(), Llvm.empty());
-        instructions.verifType(this.type);
         ir.append(instructions.toIR(t).ir);
 
         return new RetExpression(ir,new Void(),"");

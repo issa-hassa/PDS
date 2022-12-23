@@ -55,6 +55,6 @@ public class AppelFun extends Expression{
         }
         String result = Utils.newtmp();
         ir.appendCode(new Llvm.AppelFun(this.name,f.getType().toLlvmType(),arguments,result));
-        return new RetExpression(ir,new Int(),result);
+        return new RetExpression(ir,f.getType(),result);
     }
 }

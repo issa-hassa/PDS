@@ -1,9 +1,0 @@
-INT a
-a := 3
-IF a 
-	THEN 
-		a := a + 2 
-ELSE
-	a := a + 3
-
-FI

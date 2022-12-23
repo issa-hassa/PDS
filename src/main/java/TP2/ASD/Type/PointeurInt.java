@@ -11,7 +11,10 @@ public class PointeurInt extends Type {
 
 		return "INT*";
 	}
-
+	@Override
+	public boolean equals(Object o) {
+	    return o instanceof PointeurInt;
+	}
 	@Override
 	public TP2.Llvm.Type toLlvmType() {
 		

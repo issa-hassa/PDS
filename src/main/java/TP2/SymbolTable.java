@@ -85,7 +85,11 @@ public class SymbolTable {
 	      this.size = size;
 	    }
 
-	    @Override public boolean equals(Object obj) {
+    public int getSize() {
+      return size;
+    }
+
+    @Override public boolean equals(Object obj) {
 	      if(obj == null) return false;
 	      if(obj == this) return true;
 	      if(!(obj instanceof TabVariableSymbol)) return false;
@@ -145,19 +149,30 @@ public class SymbolTable {
                 o.arguments.size() == (this.arguments.size()) &&
                 this.defined == false;
     }
+    public boolean incomArg(Object obj) {
+      if(obj == null) return false;
+      if(obj == this) return true;
+      if(!(obj instanceof FunctionSymbol)) return false;
+      FunctionSymbol o = (FunctionSymbol) obj;
+      return
+              o.ident.equals(this.ident)&&
+             (!(o.type.equals(this.type))||
+              o.arguments.size() != (this.arguments.size()) )&&
+              this.defined == false;
+    }
       public void setDefined(boolean defined) {
           this.defined = defined;
       }
 }
   public static class PoinTeurSymbol extends Symbol{
     // Type type;
-    VariableSymbol v;
+    Symbol v;
     /**
      * A variable symbol
      *
      * @param ident the name of the symbol
      */
-    public PoinTeurSymbol(VariableSymbol symbol, String ident) {
+    public PoinTeurSymbol(Symbol symbol, String ident) {
       this.v = symbol;
       this.ident = ident;
     }
@@ -167,7 +182,7 @@ public class SymbolTable {
       return v.type;
     }
 
-    public VariableSymbol getV() {
+    public Symbol getV() {
       return v;
     }
 

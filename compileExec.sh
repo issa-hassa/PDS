@@ -1,6 +1,8 @@
 #!/bin/sh
 
-source  /Users/ahmed-korom/git/PDS-TP2-java/compile
+
+
+source compile
 
 blue='\033[0;34m'
 NC='\033[0m' # No Color

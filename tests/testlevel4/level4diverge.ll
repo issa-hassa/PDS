@@ -20,6 +20,6 @@ do1:
 store i32 1, i32* %x
 br label %while3
 done2: 
-ret void
+ret void 
 }
 

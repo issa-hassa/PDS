@@ -12,6 +12,9 @@ public class Program {
   //  Expression e; // What a program contains. TODO : change when you extend the language
     ArrayList<Instruction> list;;
 
+
+
+
     public Program(ArrayList<Instruction> list) {
         this.list = list;
     }
@@ -33,14 +36,10 @@ public class Program {
     public Llvm.IR toIR() throws TypeException {
       // TODO : change when you extend the language
 
-      // computes the IR of the expression
+
       SymbolTable table = new SymbolTable();
       
       Llvm.IR ir = new Llvm.IR(Llvm.empty(),Llvm.empty());
-    //  for(Instruction i: instructions) {
-  	//	ir.append(i.toIR(table));
-  	//}
-     // System.out.println(f== null );
         for (Instruction i : list) {
 
             ir.append(i.toIR(table).ir);
